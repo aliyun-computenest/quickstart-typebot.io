@@ -384,8 +384,8 @@ Resources:
               Ref: ALIYUN::AccountId
 Outputs:
   ServerAddress:
-    Description:
-      en: ServerAddress.
+    Label:
+      en: TypeBot Build Page
       zh-cn: 机器人构建页面。
     Value:
       Fn::Sub:
@@ -397,9 +397,9 @@ Outputs:
                   - InstanceGroup
                   - PublicIps
   ServerAddress1:
-    Description:
-      en: ServerAddress1.
-      zh-cn: 机器人使用页面1。
+    Label:
+      en: TypeBot Usage Page
+      zh-cn: 机器人使用页面。
     Value:
       Fn::Sub:
         - http://${ServerAddress}:8081

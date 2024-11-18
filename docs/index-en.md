@@ -46,13 +46,18 @@ The costs associated with deploying the community edition in ComputeNest mainly 
 
 ## Deployment Process
 
-1. Access ComputeNest [Deployment Link](https://computenest.console.aliyun.com/service/instance/create/default?type=user&ServiceName=Maybe%E7%A4%BE%E5%8C%BA%E7%89%88) and fill in the deployment parameters as prompted.
-2. Fill in the instance parameters. ![](./img-en/param1.png)
-3. Choose to create a new dedicated network or use an existing Virtual Private Cloud as needed. Fill in the availability zone and network parameters, then click "Next: Confirm Order". ![](./img-en/param2.png)
-4. Click "Create Now" and wait for the service instance deployment to complete. ![](./img-en/param3.png)
-5. After the service instance deployment is complete, click on the instance ID to enter the details page. ![](./img-en/serviceInstance2.png)
-6. Access the service instance usage URL. ![](./img-en/serviceInstance3.png)
-7. Navigate to the application interface and first register with your email. ![](./img-en/app.png)
-8. Enter your personal information and proceed to the next step for preference configuration. ![](./img-en/app2.png)
-9. In this step, users can configure the language and trading currency. ![](./img-en/app3.png)
-10. Start managing your assets! ![](./img-en/app4.png)
+1. Visit Compute Nest [Deployment Link](https://computenest.console.aliyun.com/service/instance/create/cn-hangzhou?type=user&ServiceName=Typebot社区版) and fill in the deployment parameters as prompted.
+2. Fill in the instance parameters ![](./img-en/param1.png)
+3. Choose to create a new dedicated network or directly use an existing dedicated network based on your needs. Fill in the availability zone and network parameters, then click "Next: Confirm Order"![](./img-en/param2.png)
+4. Click "Create Now" and wait for the service instance to be deployed![](./img-en/param3.png)
+5. Once the service instance is deployed, click on the instance ID to access the details page![](./img-en/serviceInstance2.png)
+6. Access the service instance's usage URL![](./img-en/serviceInstance3.png)
+7. The application provides two ports: one for the chatbot usage interface (ending with port 8081) and one for the chatbot building interface (ending with port 8080).
+8. Let's first enter the building interface to start creating your chatbot. Log in with your Alibaba Cloud account![](./img-en/app1.png)
+9. After logging in, you can create a chatbot![](./img-en/app2.png)
+10. You can create a chatbot using one of these three methods. Here, we select the first template to create one. ![](./img-en/app3.png)
+11. Then, select the first sample template![](./img-en/app4.png)
+12. Click the "Publish" button in the upper right corner to publish. ![](./img-en/app5.png)
+13. Copy the access link for the chatbot and paste it into your browser to access it. ![](./img-en/app6.png)
+14. You can now chat with your chatbot! ![](./img-en/app7.png)
+
