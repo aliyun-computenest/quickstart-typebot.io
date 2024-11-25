@@ -4,9 +4,7 @@
 
 ## Overview
 
-Maybe: Your personal finance operating system  
-It supports personalized financial analysis, stock investment portfolio backtesting, fund investment portfolio calculators, housing affordability calculators, interest calculators, loan calculators, financial freedom calculators, inflation calculators, and more. You can access the [official website](https://maybe.co/).  
-By installing in this way, your financial data is fully under your control, and you don't have to worry about privacy leakage.
+Typebot is an fair source chatbot builder. It allows you to create conversational apps/forms (Lead qualification, Customer support, Product launch, User onboarding, AI chats), deploy it on your website or WhatsApp number, and collect results in real-time.
 
 ## Prerequisites
 
