@@ -352,37 +352,27 @@ Resources:
             FILE_PATH="/root/application/docker_compose/.env"            
             # 替换文件中的环境变量
             sed -i "s|^NEXTAUTH_URL=.*|NEXTAUTH_URL=${NEXTAUTH_URL}|g" "$FILE_PATH"
-            sed -i "s|^NEXT_PUBLIC_VIEWER_URL=.*|NEXT_PUBLIC_VIEWER_URL=${NEXTAUTH_VIEW_URL}|g" "$FILE_PATH"
-            sed -i "s|^ADMIN_EMAIL=.*|ADMIN_EMAIL=${ADMIN_EMAIL}|g" "$FILE_PATH"
+            sed -i "s|^NEXT_PUBLIC_VIEWER_URL=.*|NEXT_PUBLIC_VIEWER_URL=${NEXTAUTH_URL}|g" "$FILE_PATH"
             if [ -n "$(tail -c 1 "$FILE_PATH")" ]; then
               echo "" >> "$FILE_PATH"  # 如果没有换行，则添加一个
             fi
             echo "CUSTOM_OAUTH_NAME=Alibaba Cloud" >> "$FILE_PATH"
             echo "CUSTOM_OAUTH_CLIENT_ID=${CUSTOM_OAUTH_CLIENT_ID}" >> "$FILE_PATH"
             echo "CUSTOM_OAUTH_CLIENT_SECRET=${CUSTOM_OAUTH_CLIENT_SECRET}" >> "$FILE_PATH"
-            echo "CUSTOM_OAUTH_WELL_KNOWN_URL=https://oauth.aliyun.com/.well-known/openid-configuration" >> "$FILE_PATH"
+            echo "CUSTOM_OAUTH_WELL_KNOWN_URL=https://oauth.alibabacloud.com/.well-known/openid-configuration" >> "$FILE_PATH"
             echo "CUSTOM_OAUTH_SCOPE=openid aliuid profile" >> "$FILE_PATH"
             echo "CUSTOM_OAUTH_USER_ID_PATH=uid" >> "$FILE_PATH"
             echo "CUSTOM_OAUTH_USER_EMAIL_PATH=aid" >> "$FILE_PATH"
-            echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> "$FILE_PATH"                          
-            echo "DEFAULT_WORKSPACE_PLAN=UNLIMITED" >> "$FILE_PATH"    
-            # 检查CUSTOM_OAUTH_CLIENT_ID和CUSTOM_OAUTH_CLIENT_SECRET是否都不为空和空字符串
-            if [ -n "${CUSTOM_OAUTH_CLIENT_ID}" ] && [ -n "${CUSTOM_OAUTH_CLIENT_SECRET}" ]; then
-              echo "CUSTOM_OAUTH_CLIENT_ID=${CUSTOM_OAUTH_CLIENT_ID}" >> "$FILE_PATH"
-              echo "CUSTOM_OAUTH_CLIENT_SECRET=${CUSTOM_OAUTH_CLIENT_SECRET}" >> "$FILE_PATH"
+            echo "ADMIN_EMAIL=${Admin_Email}" >> "$FILE_PATH"                          
+            echo "DEFAULT_WORKSPACE_PLAN=UNLIMITED" >> "$FILE_PATH"      
+            if [ -n "${GITHUB_CLIENT_ID}" ] && [ -n "${GITHUB_CLIENT_SECRET}" ]; then
+              echo "GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}" >> "$FILE_PATH"
+              echo "GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}" >> "$FILE_PATH"
             fi
+            
             systemctl start docker-compose-app
           - RegionId:
               Ref: ALIYUN::Region
-            NEXTAUTH_VIEW_URL:
-              Fn::Sub:
-                - http://${ServerAddress}:8081/
-                - ServerAddress:
-                    Fn::Select:
-                      - 0
-                      - Fn::GetAtt:
-                          - InstanceGroup
-                          - PublicIps
             NEXTAUTH_URL:
               Fn::Sub:
                 - http://${ServerAddress}:8080/
@@ -400,8 +390,12 @@ Resources:
               Fn::GetAtt:
                 - AppSecret
                 - AppSecretValue
-            ADMIN_EMAIL:
+            Admin_Email:
               Ref: ALIYUN::AccountId
+            GITHUB_CLIENT_ID:
+              Ref: GithubClientID
+            GITHUB_CLIENT_SECRET:
+              Ref: GithubClientSecret
 Outputs:
   ServerAddress:
     Label:
@@ -418,7 +412,7 @@ Outputs:
                   - PublicIps
   ServerAddress1:
     Label:
-      en: TypeBot Usage Page
+      en: TypeBot View Page
       zh-cn: 机器人使用页面。
     Value:
       Fn::Sub:
@@ -461,4 +455,3 @@ Metadata:
         Label:
           zh-cn: Github认证配置(可选)
           en: Github Authentication Configuration(Optional)
-      

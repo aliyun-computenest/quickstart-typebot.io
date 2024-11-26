@@ -45,10 +45,11 @@ Typebot：Typebot 是一个公平开源的聊天机器人构建器。它允许�
 
 
 ## 部署流程
-1. 访问计算巢 [部署链接](https://computenest.console.aliyun.com/service/instance/create/cn-hangzhou?type=user&ServiceName=Typebot社区版)，按提示填写部署参数
+1. 访问计算巢 [部署链接](https://computenest.console.aliyun.com/service/instance/create/default?type=user&ServiceName=Typebot%E7%A4%BE%E5%8C%BA%E7%89%88)，按提示填写部署参数
 2. 填写实例参数![](./img/param1.png)
-3. 根据需求选择新建专用网络或直接使用已有的专有网络。填写可用区和网络参数并点击“下一步：确认订单”![](./img/param2.png)
-4. 点击立即创建，等待服务实例部署完成![](./img/param3.png)
+3. 根据需求选择新建专用网络或直接使用已有的专有网络。填写可用区和网络参数![](./img/param2.png)
+4. 如果你需要使用GitHub的OAuth登录，则可以在此处填写你的Client和Secret，更多详细信息可以查阅GitHub的开发者文档![](./img/param3.png)。点击“下一步：确认订单”
+4. 点击立即创建，等待服务实例部署完成![](./img/param4.png)
 5. 服务实例部署完成后，点击实例ID进入到详情界面![](./img/serviceInstance2.png)
 6. 访问服务实例的使用URL![](./img/serviceInstance3.png)
 7. 该应用提供了两个端口一个是机器人使用界面-以8081端口结尾，一个是机器人构建界面，以8080端口结尾。
