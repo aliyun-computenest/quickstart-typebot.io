@@ -49,7 +49,8 @@ The costs associated with deploying the community edition in ComputeNest mainly 
 1. Visit Compute Nest [Deployment Link](https://computenest.console.aliyun.com/service/instance/create/default?type=user&ServiceName=Typebot%E7%A4%BE%E5%8C%BA%E7%89%88) and fill in the deployment parameters as prompted.
 2. Fill in the instance parameters ![](./img-en/param1.png)
 3. Choose to create a new dedicated network or directly use an existing dedicated network based on your needs. Fill in the availability zone and network parameters,
-4. If you need to use GitHub OAuth login, you can enter your Client ID and Secret here![](./img-en/param3.png). For more detailed information, please refer to the GitHub Developer Documentation. Then click "Next: Confirm Order"![](./img-en/param2.png)
+4. If you need to use GitHub OAuth login, you can enter your Client ID and Secret here![](./img-en/param3.png). For more detailed information, please refer to the [GitHub Developer Documentation](https://github.com/settings/developers)
+   . Then click "Next: Confirm Order"![](./img-en/param2.png)
 5. Click "Create Now" and wait for the service instance to be deployed![](./img-en/param4.png)
 6. Once the service instance is deployed, click on the instance ID to access the details page![](./img-en/serviceInstance2.png)
 7. Access the service instance's usage URL![](./img-en/serviceInstance3.png)
