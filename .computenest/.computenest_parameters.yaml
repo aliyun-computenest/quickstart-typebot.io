@@ -1,0 +1,11 @@
+ServiceType: private
+ArtifactSourceType: DockerCompose
+ServiceBuildRegion: ap-southeast-1
+RepoName: aliyun-computenest/quickstart-typebot.io
+DockerComposeEnvPath: .env
+RegionId: ap-southeast-1
+CustomParameters: ''
+DockerComposeYamlPath: docker-compose.yaml
+Owner: LYH-RAIN
+Branch: test
+Platform: github
