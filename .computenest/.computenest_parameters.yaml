@@ -1,1 +1,0 @@
-{"ServiceType":"private","AllowedRegions":["cn-hangzhou"],"ArtifactSourceType":"DockerCompose","RepoName":"aliyun-computenest/typebot.io","Arch":"EcsSingle","DockerComposeEnvPath":".env","RegionId":"cn-hangzhou","CustomParameters":"","DockerComposeYamlPath":"docker-compose.yaml"}
