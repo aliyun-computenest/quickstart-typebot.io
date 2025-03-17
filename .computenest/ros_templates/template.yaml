@@ -5,21 +5,6 @@ Conditions:
       - NewVPC
       - Ref: VpcOption
 Parameters:
-  GithubClientID:
-    Type: String
-    Label:
-      en: Github Auth Client ID
-      zh-cn: Github OAuth客户端ID
-    Required: false
-    Default: ""
-  GithubClientSecret:
-    Type: String
-    Label:
-      en: Github Auth Client Secret
-      zh-cn: Github OAuth客户端秘钥
-    NoEcho: true
-    Required: false
-    Default: ""
   VpcOption:
     Type: String
     AllowedValues:
@@ -166,6 +151,11 @@ Parameters:
       en: Zone ID
       zh-cn: 可用区ID
     AssociationProperty: ALIYUN::ECS::Instance::ZoneId
+    AssociationPropertyMetadata:
+      DefaultValueStrategy: random
+      InstanceChargeType: ${PayType}
+      SystemDiskCategory: cloud_essd
+      InstanceType: ${EcsInstanceType}
   VpcId:
     Type: String
     Label:
@@ -178,6 +168,7 @@ Parameters:
         - ${VpcOption}
     Default: ''
     AssociationPropertyMetadata:
+      AutoSelectFirst: true
       Visible:
         Condition:
           Fn::Equals:
@@ -195,48 +186,15 @@ Parameters:
         - ExistingVPC
         - ${VpcOption}
     AssociationPropertyMetadata:
-      VpcId: VpcId
-      ZoneId: ZoneId
+      AutoSelectFirst: true
+      VpcId: ${VpcId}
+      ZoneId: ${ZoneId}
       Visible:
         Condition:
           Fn::Equals:
             - ExistingVPC
             - ${VpcOption}
 Resources:
-  OAuthApp:
-    Type: 'ALIYUN::RAM::Application'
-    DependsOn: InstanceGroup
-    Properties:
-      DisplayName:
-        Ref: ALIYUN::StackName
-      AppType: "WebApp"
-      AppName:
-        Ref: ALIYUN::StackName
-      RedirectUris:
-        - Fn::Sub:
-            - http://${ServerAddress}:8080/api/auth/callback/custom-oauth
-            - ServerAddress:
-                Fn::Select:
-                  - 0
-                  - Fn::GetAtt:
-                      - InstanceGroup
-                      - PublicIps
-      SecretRequired: True
-      RequiredScopes:
-        - openid
-        - aliuid
-        - profile
-      PredefinedScopes:
-        - openid
-        - aliuid
-        - profile
-  AppSecret:
-    Type: 'ALIYUN::RAM::AppSecret'
-    Properties:
-      AppId:
-        Fn::GetAtt:
-          - OAuthApp
-          - AppId
   # 新建vpc
   EcsVpc:
     Type: ALIYUN::ECS::VPC
@@ -304,7 +262,7 @@ Resources:
         Ref: ZoneId
       SecurityGroupId:
         Ref: SecurityGroup
-      ImageId: "{{resolve:oos:aliyun/services/computenest/images/aliyun_3_2104_docker_compose_2_27_compute_nest}}"
+      ImageId: ecs_image_quickstart-typebot.io
       Password:
         Ref: InstancePassword
       InstanceType:
@@ -319,18 +277,17 @@ Resources:
     Properties:
       InstanceIds:
         Fn::GetAtt:
-          - InstanceGroup
-          - InstanceIds
+        - InstanceGroup
+        - InstanceIds
       Type: RunShellScript
       Sync: true
       Timeout: 3600
       CommandContent:
         Fn::Sub:
           - |
-            wget '{{ computenest::file::aliyun-computenest_typebot_io-docker-compose }}' -O /root/application/docker_compose.tar
-            tar -xvf /root/application/docker_compose.tar -C /root/application
-
-            cat > /etc/systemd/system/docker-compose-app.service <<EOF
+            file_path="/etc/systemd/system/quickstart-typebot_io.service"
+            if [ ! -f "$file_path" ]; then
+            cat > $file_path <<EOF
             [Unit]
             Description=Docker Compose Application Service
             Requires=docker.service
@@ -339,7 +296,7 @@ Resources:
             [Service]
             Type=oneshot
             RemainAfterExit=yes
-            WorkingDirectory=/root/application/docker_compose
+            WorkingDirectory=/root/application
             ExecStart=/usr/bin/docker compose -f docker-compose.yaml up -d
             ExecStop=/usr/bin/docker compose down
             TimeoutStartSec=0
@@ -347,74 +304,18 @@ Resources:
             [Install]
             WantedBy=multi-user.target
             EOF
-
-            # 要替换的文件路径
-            FILE_PATH="/root/application/docker_compose/.env"            
-            # 替换文件中的环境变量
-            sed -i "s|^NEXTAUTH_URL=.*|NEXTAUTH_URL=${NEXTAUTH_URL}|g" "$FILE_PATH"
-            sed -i "s|^NEXT_PUBLIC_VIEWER_URL=.*|NEXT_PUBLIC_VIEWER_URL=${NEXTAUTH_VIEW_URL}|g" "$FILE_PATH"
-            sed -i "s|^ADMIN_EMAIL=.*|ADMIN_EMAIL=${ADMIN_EMAIL}|g" "$FILE_PATH"
-            if [ -n "$(tail -c 1 "$FILE_PATH")" ]; then
-              echo "" >> "$FILE_PATH"  # 如果没有换行，则添加一个
+            systemctl enable quickstart-typebot_io
+            
             fi
-            echo "CUSTOM_OAUTH_NAME=Alibaba Cloud" >> "$FILE_PATH"
-            echo "CUSTOM_OAUTH_CLIENT_ID=${CUSTOM_OAUTH_CLIENT_ID}" >> "$FILE_PATH"
-            echo "CUSTOM_OAUTH_CLIENT_SECRET=${CUSTOM_OAUTH_CLIENT_SECRET}" >> "$FILE_PATH"
-            echo "CUSTOM_OAUTH_WELL_KNOWN_URL=https://oauth.aliyun.com/.well-known/openid-configuration" >> "$FILE_PATH"
-            echo "CUSTOM_OAUTH_SCOPE=openid aliuid profile" >> "$FILE_PATH"
-            echo "CUSTOM_OAUTH_USER_ID_PATH=uid" >> "$FILE_PATH"
-            echo "CUSTOM_OAUTH_USER_EMAIL_PATH=aid" >> "$FILE_PATH"
-            echo "ADMIN_EMAIL=${ADMIN_EMAIL}" >> "$FILE_PATH"                          
-            echo "DEFAULT_WORKSPACE_PLAN=UNLIMITED" >> "$FILE_PATH"    
-            # 检查CUSTOM_OAUTH_CLIENT_ID和CUSTOM_OAUTH_CLIENT_SECRET是否都不为空和空字符串
-            if [ -n "${CUSTOM_OAUTH_CLIENT_ID}" ] && [ -n "${CUSTOM_OAUTH_CLIENT_SECRET}" ]; then
-              echo "CUSTOM_OAUTH_CLIENT_ID=${CUSTOM_OAUTH_CLIENT_ID}" >> "$FILE_PATH"
-              echo "CUSTOM_OAUTH_CLIENT_SECRET=${CUSTOM_OAUTH_CLIENT_SECRET}" >> "$FILE_PATH"
-            fi
-            if [ -n "${GITHUB_CLIENT_ID}" ] && [ -n "${GITHUB_CLIENT_SECRET}" ]; then
-              echo "GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}" >> "$FILE_PATH"
-              echo "GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}" >> "$FILE_PATH"
-            fi
-            systemctl start docker-compose-app
+            systemctl daemon-reload
+            systemctl start quickstart-typebot_io
           - RegionId:
               Ref: ALIYUN::Region
-            NEXTAUTH_VIEW_URL:
-              Fn::Sub:
-                - http://${ServerAddress}:8081/
-                - ServerAddress:
-                    Fn::Select:
-                      - 0
-                      - Fn::GetAtt:
-                          - InstanceGroup
-                          - PublicIps
-            NEXTAUTH_URL:
-              Fn::Sub:
-                - http://${ServerAddress}:8080/
-                - ServerAddress:
-                    Fn::Select:
-                      - 0
-                      - Fn::GetAtt:
-                          - InstanceGroup
-                          - PublicIps
-            CUSTOM_OAUTH_CLIENT_ID:
-              Fn::GetAtt:
-                - OAuthApp
-                - AppId
-            CUSTOM_OAUTH_CLIENT_SECRET:
-              Fn::GetAtt:
-                - AppSecret
-                - AppSecretValue
-            ADMIN_EMAIL:
-              Ref: ALIYUN::AccountId
-            GITHUB_CLIENT_ID:
-              Ref: GithubClientID
-            GITHUB_CLIENT_SECRET:
-              Ref: GithubClientSecret
-Outputs:
-  ServerAddress:
-    Label:
-      en: TypeBot Build Page
-      zh-cn: 机器人构建页面。
+Outputs: 
+  typebot-builder_address:
+    Description:
+      en: typebot-builder address.
+      zh-cn: typebot-builder 访问页面。
     Value:
       Fn::Sub:
         - http://${ServerAddress}:8080
@@ -424,10 +325,10 @@ Outputs:
               - Fn::GetAtt:
                   - InstanceGroup
                   - PublicIps
-  ServerAddress1:
-    Label:
-      en: TypeBot Usage Page
-      zh-cn: 机器人使用页面。
+  typebot-viewer_address:
+    Description:
+      en: typebot-viewer address.
+      zh-cn: typebot-viewer 访问页面。
     Value:
       Fn::Sub:
         - http://${ServerAddress}:8081
@@ -445,14 +346,12 @@ Metadata:
           - PayPeriodUnit
           - PayPeriod
         Label:
-          zh-cn: 付费类型配置
-          en: Payment Type Configuration
+          default: 付费类型配置
       - Parameters:
           - EcsInstanceType
           - InstancePassword
         Label:
-          zh-cn: 资源配置
-          en: Resources Configuration
+          default: 资源配置
       - Parameters:
           - ZoneId
           - VpcOption
@@ -461,12 +360,4 @@ Metadata:
           - VpcCidrBlock
           - VSwitchCidrBlock
         Label:
-          zh-cn: 可用区配置
-          en: Availability Zone Configuration
-      - Parameters:
-          - GithubClientID
-          - GithubClientSecret
-        Label:
-          zh-cn: Github认证配置(可选)
-          en: Github Authentication Configuration(Optional)
-      
+          default: 可用区配置

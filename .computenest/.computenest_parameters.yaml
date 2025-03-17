@@ -1,1 +1,12 @@
-{"ServiceType":"private","AllowedRegions":["cn-hangzhou"],"ArtifactSourceType":"DockerCompose","RepoName":"aliyun-computenest/typebot.io","Arch":"EcsSingle","DockerComposeEnvPath":".env","RegionId":"cn-hangzhou","CustomParameters":"","DockerComposeYamlPath":"docker-compose.yaml"}
+RuntimeType: Container
+ServiceType: private
+ArtifactSourceType: DockerCompose
+ServiceBuildRegion: ap-southeast-1
+RepoName: aliyun-computenest/quickstart-typebot.io
+DockerComposeEnvPath: .env
+RegionId: cn-hangzhou
+CustomParameters: ''
+DockerComposeYamlPath: docker-compose.yaml
+Owner: LYH-RAIN
+Branch: main
+Platform: github
